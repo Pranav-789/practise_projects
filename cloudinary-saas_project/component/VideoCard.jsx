@@ -46,7 +46,14 @@ const VideoCard = ({video, onDownload}) => {
 
     const formatSize = useCallback((size)=>{
         return filesize(size);
-    }, [])
+    }, []);
+
+    const formatDuration = useCallback((seconds) => {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = Math.round(seconds % 60);
+      return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+    }, []);
+
     const handlePreviewError = () => setPreviewError(true);
 
     const compressionPercentage = useCallback((original, compressed) => {
@@ -55,6 +62,9 @@ const VideoCard = ({video, onDownload}) => {
       return ((diff / Number(original)) * 100).toFixed(2);
     }, []);
 
+    useEffect(() => {
+      setPreviewError(false);
+    }, [isHovered]);
 
   return (
     <div

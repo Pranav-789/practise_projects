@@ -8,19 +8,37 @@ const page = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // const fetchVideos = useCallback(async () => {
+  //   try {
+  //     const response = await axios.get("/api/videos");
+  //     if (Array.isArray(response.data)) {
+  //       setVideos(response.data);
+  //       console.log("fetchVideos called", response.data);
+  //     } else {
+  //       throw new Error("Unexpected response format");
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     setError(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, []);
+
   const fetchVideos = useCallback(async () => {
     try {
-      const response = await axios.get("/api/videos");
-      if (Array.isArray(response.data)) {
-        setVideos(response.data);
-        console.log("fetchVideos called", response.data);
+      const response = await fetch("/api/videos");
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        setVideos(data);
+        console.log("fetchVideos called", data);
+        setLoading(false);
       } else {
         throw new Error("Unexpected response format");
       }
     } catch (error) {
       console.log(error);
       setError(error);
-    } finally {
       setLoading(false);
     }
   }, []);
@@ -35,13 +53,15 @@ const page = () => {
     document.body.removeChild(link);
   }, []);
 
+  useEffect(() => {
+    fetchVideos();
+  }, [fetchVideos]);
+  
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  useEffect(() => {
-    fetchVideos();
-  }, [fetchVideos]);
+  
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Videos</h1>
